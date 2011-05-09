@@ -1,0 +1,15 @@
+Rawley Heimer, CS177
+This is my final project
+STOCHASTIC LIFE-CYCLE MODEL SOLVED WITH DYNAMIC PROGRAMMING
+This work analyzes how individuals make the decision to retire
+when faced with the possibility of a crash in asset prices.
+SIMULATING LIFE HISTORY
+asset price returns
+mean     std     skew
+        0.084     0.013748       0.3818
+
+ 
+distribution of retirement years
+mean     std     skew
+        9.065      0.71504      0.90708
+
