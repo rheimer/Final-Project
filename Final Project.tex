@@ -1,0 +1,472 @@
+
+\documentclass[12pt]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{eurosym}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage[nohead]{geometry}
+\usepackage[singlespacing]{setspace}
+\usepackage[bottom]{footmisc}
+\usepackage{indentfirst}
+\usepackage{endnotes}
+\usepackage{graphicx}
+\usepackage{rotating}
+\usepackage{lscape}
+
+\setcounter{MaxMatrixCols}{10}
+%TCIDATA{OutputFilter=LATEX.DLL}
+%TCIDATA{Version=5.00.0.2570}
+%TCIDATA{<META NAME="SaveForMode" CONTENT="1">}
+%TCIDATA{LastRevised=Monday, May 09, 2011 00:41:52}
+%TCIDATA{<META NAME="GraphicsSave" CONTENT="32">}
+%TCIDATA{Language=American English}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{acknowledgement}{Acknowledgement}
+\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem{case}[theorem]{Case}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{conclusion}[theorem]{Conclusion}
+\newtheorem{condition}[theorem]{Condition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{criterion}[theorem]{Criterion}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{exercise}[theorem]{Exercise}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{solution}[theorem]{Solution}
+\newtheorem{summary}[theorem]{Summary}
+\newenvironment{proof}[1][Proof]{\noindent\textbf{#1.} }{\ \rule{0.5em}{0.5em}}
+\makeatletter
+\def\@biblabel#1{\hspace*{-\labelsep}}
+\makeatother
+\geometry{left=1in,right=1in,top=1.00in,bottom=1.0in}
+\input{tcilatex}
+
+\begin{document}
+
+\title{Dynamic Programming with Discrete Choice: An Application to Asset
+Price Crashes and Retirement Decisions}
+\author{Rawley Z. Heimer\thanks{%
+Corresponding Author: Rawley Z. Heimer, Brandeis International Business
+School Mailstop 032, P.O. Box 549100, Waltham, MA 02454, USA. e-mail:
+rheimer@brandeis.edu. } \\
+%EndAName
+{\normalsize International Business School, Brandeis University}}
+\maketitle
+
+\sloppy
+
+\begin{center}
+\textbf{Abstract}
+\end{center}
+
+%TCIMACRO{\TeXButton{noindent}{\noindent}}%
+%BeginExpansion
+\noindent%
+%EndExpansion
+This paper demonstrates how to use Matlab to solve a discrete time dynamic
+programming problem that involves discrete choice. \ I present an
+application in which I use a life-cycle model of consumption to analyze how
+individuals make the decision to retire from work when faced with increased
+tail risk in the distribution of asset prices. \ This research is relevant
+considering the loss of wealth accumulated during the Great Recession. \
+This tutorial is appropriate for a student studying intermediate to advanced
+macroeconomics with some background in computer programming or statistical
+packages. \ 
+
+\strut 
+
+\bigskip 
+
+\bigskip 
+
+\bigskip 
+
+\bigskip 
+
+\bigskip 
+
+\bigskip 
+
+\bigskip 
+
+\bigskip 
+
+\bigskip 
+
+\bigskip 
+
+\bigskip 
+
+\bigskip 
+
+\textbf{Keywords:} Asset price crashes; Consumption/saving; Dynamic
+programming; Life-cycle model; Matlab; Retirement.
+
+\strut
+
+\textbf{JEL Classification Numbers:} F31, G11.
+
+\pagebreak 
+%TCIMACRO{\TeXButton{onehalfspacing}{\onehalfspacing}}%
+%BeginExpansion
+\onehalfspacing%
+%EndExpansion
+
+\section{Introduction}
+
+According to the Federal Reserve, U.S. households lost \$5.1 trillion, or
+nine percent, of accumulated wealth in the last quarter of 2008.\footnote{%
+http://www.nytimes.com/2009/03/13/business/economy/13wealth.html} This
+figure reflects dramatic declines in both stock prices and home values. \
+Considering that many individuals rely on these assets to sustain
+consumption during their retirement years, it is worth asking the question
+how the retirement decisions of individuals has been affected by the recent
+asset price crash. \ 
+
+This research is most similar to that of Coile and Levine (2011) in that it
+asks the question of how individuals have responded to the decline in asset
+prices following the Great Recession. \ However, to address the question
+empirically this work uses numerical methods and a structural model rather
+than a reduced form specification. \ While the life-cycle model has been a
+workhouse in economics for the past few decades, its foundation is most
+often attributed to Friedman (1957). \ This research also uses the solution
+method put into practice by Stock and Wise (1990). \ 
+
+In the following section I present the model and its solution. \ In section
+3, I demonstrate how to use Matlab to solve a model with discrete choice
+using dynamic programming and conduct simulations. \ In the 4th section, I
+provide exercises for the user to demonstrate their understanding of the
+material and solutions.
+
+\section{The Model}
+
+Consider a life-cycle model in which a representative agent lives $T$
+periods. \ She chooses how much physical goods to consume $c_{t}$, how much
+leisure to pursue $l_{t}$ , and how much assets $a_{t+1}$ to accumulate each
+period so as to maximize the expected value $E$ of lifetime utility $%
+U(c_{t},l_{t})$:%
+\begin{equation}
+E_{t}\sum_{t=1}^{T}\beta ^{t}(U_{t}(c_{t},l_{t}))
+\end{equation}
+
+%TCIMACRO{\TeXButton{noindent}{\noindent}}%
+%BeginExpansion
+\noindent%
+%EndExpansion
+For the functional form of $U(c_{t},l_{t})$ I choose constant relative risk
+aversion with non-separability between consumption and leisure:  
+\begin{equation}
+U_{t}(c_{t},l_{t})=\frac{(c_{t}^{\theta }l_{t}^{1-\theta })^{1-\sigma }-1}{%
+1-\sigma }
+\end{equation}
+
+%TCIMACRO{\TeXButton{noindent}{\noindent}}%
+%BeginExpansion
+\noindent%
+%EndExpansion
+where $\beta $ is the subjective discount factor, $\theta $ is the
+elasticity of consumption, and $\sigma $ coefficient of relative risk
+aversion. \ The agent earns a constant income stream $y$ during the first $%
+R<T$ periods of her life which she can either consume or save. \ Once the
+agent retires, she receives retirement benefits $\lambda \in \lbrack 0,1]$
+that are a fraction of her last paycheck starting in $t=R+1$ and lasting
+until $T.$ \ In order to consume goods during retirement the agent also
+earns a return on her saving ($1+r_{t}$). \ Thus, in any given period $1\leq
+t\leq R$ the agent is constrained to the following law of motion:
+
+\begin{equation}
+a_{t+1}=(1+r_{t})a_{t}+y-c_{t}
+\end{equation}
+
+%TCIMACRO{\TeXButton{noindent}{\noindent}}%
+%BeginExpansion
+\noindent%
+%EndExpansion
+and in periods $R<t\leq T$:
+
+\begin{equation}
+a_{t+1}=(1+r_{t})a_{t}+\lambda y-c_{t}
+\end{equation}
+
+I further impose the restriction that the agent cannot be a net debtor in
+any period (bankruptcy would be the preferred option)\ and that she exits
+the life-cycle with zero wealth. \ These restrictions require $a_{t}\geq 0$
+and $a_{T+1}=0$, respectively. \ 
+
+The amount of leisure an individual consumes is simply one minus the amount
+of work they supply, $n_{t}=1-l_{t}$. \ Furthermore, for $1\leq t\leq R$, $%
+l_{t}$ is equal to a constant between zero and one, and, for $R<t\leq T$, $%
+l_{t}=1$. \ These assumptions impose no flexibility over the number of hours
+worked during their career (a notion that is not inconsistent with the
+nature of many labor contracts) and, for simplicity, that retired
+individuals do not take part time jobs. \ They are also unable to re-enter
+the workforce after retirement.\ Considering the binary nature of leisure in
+this model an analogous state variable would be for the agent to choose
+their year of retirement, $R$.
+
+The rate of return on assets $r_{t}$ is determined probabilistically each
+period. \ I assume it evolves according to a three state Markov chain with a
+transition matrix $\chi $:%
+\begin{equation}
+\chi (r^{h},r^{l},r^{c})=\Pr (r_{t}=r^{h}|r_{t}=r^{l},r_{t}=r^{h})
+\end{equation}
+
+%TCIMACRO{\TeXButton{noindent}{\noindent}}%
+%BeginExpansion
+\noindent%
+%EndExpansion
+for $r^{h},r^{l},r^{c}\in \{high,low,crash\}$ where $r^{h}>r^{l}>r^{c}$ and $%
+r^{h},r^{l}\geq 0$, $r^{c}<0$. \ The former two states reflect normal
+variation in the economy, boom and bust, while the latter is intended to
+capture extreme events such as the Great Recession.
+
+\subsection{The Solution to the Model}
+
+It is not possible to find a closed form solution for any of the state
+variables $c_{t},a_{t+1},l_{t},R$. \ \ Since this research is concerned with
+the timing of retirement, I focus on developing a policy function, or
+decision rule for $R$ when holding consumption constant. \ 
+
+I can write the value function for the dynamic programming problem as the
+discounted present value of lifetime utility and say that leisure is a
+function of $R$:%
+\begin{equation}
+V_{t}(R)=\sum_{t=1}^{T}\beta ^{t}(U_{t}(l_{t}(R)))
+\end{equation}
+
+%TCIMACRO{\TeXButton{noindent}{\noindent}}%
+%BeginExpansion
+\noindent%
+%EndExpansion
+The value function can be rewritten by splitting up the summation into pre-
+and post-retirement components:%
+\begin{equation}
+V_{t}(R)=\sum_{s=t}^{R-1}\beta ^{s-t}U_{w}(l_{s}(R))+\sum_{s=t}^{T}\beta
+^{s-t}U_{R}(l_{s}(R))
+\end{equation}
+
+%TCIMACRO{\TeXButton{noindent}{\noindent}}%
+%BeginExpansion
+\noindent%
+%EndExpansion
+where $U_{w}$ is the utility while working and $U_{R}$ is the utility while
+retired. \ 
+
+Since the agent must choose whether to work during year $t$ implying $R>t$,
+or retire so that $R=t$, she must compare the expected value of retirement
+today with that which comes by retiring at any future date. \ Therefore, the
+expected gain $G_{t}$ from delaying retirement until $R$ is found to be:%
+\begin{equation}
+G_{t}(R)=E_{t}V_{t}(R)-E_{t}V_{t}(t)
+\end{equation}
+
+I call the solution for the agent's retirement date $R^{\ast }$. \ 
+
+\begin{equation}
+R^{\ast }=\underset{R\in (t+1,t+2,...,T)}{\arg \max }E_{t}V_{t}(R)
+\end{equation}
+
+%TCIMACRO{\TeXButton{noindent}{\noindent}}%
+%BeginExpansion
+\noindent%
+%EndExpansion
+This result yields the following decision rule:
+
+\begin{equation}
+G_{t}(R^{\ast })=E_{t}V_{t}(R^{\ast })-E_{t}V_{t}(t)>0
+\label{eq: Decision Rule}
+\end{equation}
+
+%TCIMACRO{\TeXButton{noindent}{\noindent}}%
+%BeginExpansion
+\noindent%
+%EndExpansion
+Equation \ref{eq: Decision Rule} states that the individual continues to
+work at $t$ only if the gains from continuing to work remains positive. \ 
+
+With this solution in hand, it is possible to use numerical methods to
+determine when work is no longer preferred to retirement. \ I\ can calculate
+the retirement date of the agent following some probabilistic sequence of
+asset price returns. \ In the following section I demonstrate how to use
+Matlab to derive the solution the problem. 
+
+\section{Numerical Computing}
+
+The following is a walkthrough of the script titled,
+"LCretireOV\_3states\_sims.m". \ The work herein is an extension of
+"consav.m" and calls the function "markov.m" (Hall, 2006). I proceed
+sequentially through the script and refer to section titles provided within
+the .m file.
+
+\subsection{Set Parameter Values}
+
+While many of the values in this section could have been included later in
+the script file, for ease of use the parameters of the model are included in
+the beginning. \ Doing so allows the researcher to easily conduct
+comparative statics, or in other words, determine how changes in the
+parameters of the problem effect the variables of interest.
+
+The choice of parameter values, also called model calibration, is a
+frequently contentious issue in economics. \ In this tutorial, parameters
+are chosen to reflect the findings of micro-studies (for example, the
+elasticity of consumption), government policies (for example, retirement
+benefits being roughly a third of income), or historical averages found in
+data (such as the percentage of the day spent working). \ 
+
+\subsection{Form Wealth Grid}
+
+The solution to the dynamic programming problem requires allowing the agent
+to use backward induction from $T+1$ to create a set of complete contingent
+outcomes. \ In other words, the agent must be able to arrive in any possible
+state and choose how much assets to carry into the following period and when
+to retire. \ In order to provide the agent with these options, I first
+produce a grid for the agent's wealth. \ The agent is allowed to choose any
+point on the grid which extends from zero to eighty in increments of 0.05. \
+There is a trade-off between the precision of the grid-points and the size
+of the grid, and the speed of computing.
+
+\subsection{Calculate the Utility Function}
+
+In this section, since the agent always chooses to consume all that is not
+stored in the asset between periods, I first calculate how much consumption
+the agent chooses in any of the three states both before and after
+retirement. \ I then use these values to calculate the agent's utility in
+each state. \ The lines of code 78-83 find all values in which consumption
+falls below zero and replaces the corresponding utility with $-\infty $. \
+Since the agent will never choose a utility of $-\infty $ it restricts the
+agent to only positive values for consumption. \ 
+
+\subsection{Use Backward Induction to Solve the Model}
+
+In this section I calculate the agent's solution to the dynamic programming
+problem. \ This requires the agent to choose the maximum value function in
+each state. \ I calculate two four-dimension objects called "v" and
+"tdecis". \ The former stores the maximum achievable value function in all
+three states, in each period $t$, and for every possible retirement year $R$%
+. \ The latter stores the corresponding grid-point index. 
+
+\subsection{Use Backward Induction to Choose Retirement Date}
+
+This segment of code is the primary innovation of this work. \ I show that
+after calculating the complete set of contingent outcomes for all possible
+retirement dates, I can then use the method and the decision rule described
+in section 2.1 (equation 10) to calculate when the value of being retired
+surpasses the value of continuing to work. \ This is achieved in line 146 by
+determining which value function is greater, that with $R=t$ or $R=t+1$. \ I
+store the results of all state contingent outcomes in the three-dimensional
+object, "decRetire".
+
+\subsection{Simulate Life of the Agent}
+
+Lastly, I employ simulations of the agent's life-cycle to determine the
+distribution of retirement dates. \ Lines 162-172 initiate the simulation by
+specifying the number of simulations and other initial conditions as well as
+generating matrices to store the results recorded during each pass. \ In
+each simulation, the agent starts in period $t=1$ as an employed individual
+living in the state with high asset price returns. \ During each period $t$%
+,the agent first decides whether or not to retire and then determines how
+much assets to carry into the following period. \ After each simulation all
+state and control variables are recorded as well as the date in which the
+individual chooses to retire in the vector "RetireYear". \ With this set of
+results in hand I can then assess how the distribution of retirement years
+is influenced by the distribution of asset prices. \ 
+
+\section{Exercises and Answers}
+
+\subsection{Compare the solution to the economy without asset price crashes}
+
+Make a copy of the Matlab script "LCretireOV\_3states\_sims.m" and name it 
+"LCretireOV\_2states\_sims.m". \ Modify the script so that there are only
+two possible values for $r_{t}$, $r^{h},r^{l}\in \{high,low\}$. \ Pick
+values for both $r^{h}$ and $r^{l}$, and a probability transition matrix $%
+\chi $ such that the mean and variance are the same as that in the original
+script with three states. \ Run the script and graph the resulting
+distribution of retirement dates. \ Calculate the mean, variance, and skew
+of the simulated retirement dates and compare the results in the two cases,
+the model with and the model without the asset price crash. \ 
+
+{\normalsize \singlespacing}%
+%TCIMACRO{\TeXButton{noindent}{\noindent}}%
+%BeginExpansion
+\noindent%
+%EndExpansion
+\textbf{Solution: }\textit{See the attached Matlab file,
+"LCretireOV\_2states\_sims.m". \ The results suggest that the mean
+retirement year is increasing in the case where there are asset price
+crashes. \ In the economy with only two states there is no variance or skew
+in the retirement year. \ While this is a rare case, it does imply that the
+presence of asset price crashes can increase both the variance and skew of
+retirement years. \ }
+
+{\normalsize 
+%TCIMACRO{\TeXButton{onehalfspacing}{\onehalfspacing}}%
+%BeginExpansion
+\onehalfspacing%
+%EndExpansion
+}
+
+\subsection{What happens if labor supply is allowed to vary?}
+
+In the model above, leisure (equal to one minus labor supply) is constant
+prior to retirement and equal to one thereafter. \ Consider the case in
+which the agent is allowed to vary how much leisure they pursue (how much
+labor they supply) each period while the decision to retire remains discrete
+and irreversible. \ Without actually creating the script (you would likely
+need stronger computing power to run it!), explain how to modify the .m file
+to allow for this possibility. \ Predict what would happen to the variance
+and skewness of retirement years when agents are allowed to adjust along
+this margin.
+
+{\normalsize \singlespacing}%
+%TCIMACRO{\TeXButton{noindent}{\noindent}}%
+%BeginExpansion
+\noindent%
+%EndExpansion
+\textbf{Solution: }\textit{In order to allow for variable labor supply the
+script would have to be modified to include another state variable. \ This
+would require creating a second grid, this one being for labor supply, and
+then adding another dimension to the calculated utility functions in lines
+71-76 of "LCretireOV\_3states\_sims.m". \ When calculating the agent's
+policy function for assets they would also need to decide what level of
+labor supply maximizes their utility in every possible state. \ }
+
+\textit{Allowing the agent to adjust along this margin would likely cause
+them to vary their labor supply to respond to changes in asset price
+returns. \ For example, when their asset prices fall, they will increase
+their workload to avoid experiencing a large drop in consumption. \ Since
+they can choose this option instead of delaying retirement to make up for
+lost income its inclusion in the model will likely lead to lower variance
+and reduced skewness in the distribution of retirement dates. \ }
+
+{\normalsize \singlespacing}\pagebreak \nolinebreak 
+
+\begin{thebibliography}{9}
+\bibitem{CL2011} Coile, Courtney C. and Phillip B. Levine, \textit{"The
+Market Crash and Mass Layoffs: How the Current Economic Crisis May Affect
+Retirement,"} The B.E. Journal of Economic Analysis \& Policy: Vol. 11: Iss.
+1 (Contributions), Article 22, 2011. 
+
+\bibitem{FR1957} Friedman, Milton, \textit{"A Theory of the Consumption
+Function,"} NBER Books, National Bureau of Economic Research, Inc, 1957,
+number frie57-1.
+
+\bibitem{HALL2006} Hall, George J. "Economics 303 Home Page." George J.
+Hall's Homepage. Brandeis University, 30 Aug. 2006. Web. 09 May 2011. 
+\TEXTsymbol{<}http://people.brandeis.edu/\symbol{126}ghall/econ303/%
+\TEXTsymbol{>}.
+
+\bibitem{SW1990} Stock, James H. and David A. Wise. \textit{"Pensions, the
+Option Value of Work, and Retirement."} Econometrica, Vol. 58, No.5 (Sep.,
+1990), pp. 1151-1180.
+\end{thebibliography}
+
+\end{document}
